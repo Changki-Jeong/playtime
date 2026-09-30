@@ -53,6 +53,14 @@
   }
   .screen{ width:100%; display:none; flex-direction:column; align-items:center; height:100%; min-height:0; overflow:hidden; }
   .screen.active{ display:flex; flex:1 1 auto; }
+  .fit-wrap{
+    width:100%;
+    flex:0 0 auto;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    transform-origin:top center;
+  }
 
   /* ---------- header ---------- */
   header{
@@ -609,6 +617,16 @@
     #jung-kb .key.vowel{ height:42px; font-size:17px; }
     .equation{ font-size:42px; }
   }
+
+  /* ---------- 태블릿 가로/세로 폭에서 홈 카드를 한 줄로: 세로 높이를 줄여 스크롤 없이 맞춤 ---------- */
+  @media (min-width:700px){
+    .app{ max-width:1000px; }
+    .home-cards{ flex-wrap:nowrap; gap:12px; }
+    .mode-card{ flex:1 1 0; min-width:0; max-width:none; padding:18px 10px; }
+    .mode-card .emoji{ font-size:38px; margin-bottom:6px; }
+    .mode-card .title{ font-size:18px; margin-bottom:4px; }
+    .mode-card .desc{ font-size:12px; line-height:1.3; }
+  }
 </style>
 </head>
 <body>
@@ -617,35 +635,37 @@
   <!-- ============ HOME ============ -->
   <section id="home" class="screen active">
     <button class="gear-btn" onclick="openSettings()" aria-label="설정">⚙️</button>
-    <h1 class="home-title">글자 숫자 놀이터</h1>
-    <p class="home-sub">놀이터에서 한글과 숫자를 배워봐요!</p>
-    <div class="score-pill" id="home-score-pill">⭐ 0 / 15</div>
-    <div class="home-complete-msg" id="home-complete-msg" style="display:none;">🎉 오늘의 목표를 달성했습니다! 🎉</div>
-    <div class="home-cards">
-      <div class="mode-card shape" onclick="startShape()">
-        <span class="emoji">🧩</span>
-        <div class="title">모양 맞추기</div>
-        <div class="desc">같은 이모지 카드를<br>찾아보세요</div>
-      </div>
-      <div class="mode-card card" onclick="startCard()">
-        <span class="emoji">🃏</span>
-        <div class="title">카드 맞추기</div>
-        <div class="desc">그림과 숫자가 같은<br>카드를 찾아보세요</div>
-      </div>
-      <div class="mode-card math" onclick="startMath()">
-        <span class="emoji">🔢</span>
-        <div class="title">숫자 계산</div>
-        <div class="desc">덧셈과 뺄셈을 풀고<br>숫자 버튼을 눌러요</div>
-      </div>
-      <div class="mode-card day" onclick="startDay()">
-        <span class="emoji">📅</span>
-        <div class="title">요일 익히기</div>
-        <div class="desc">오늘 요일을 보고<br>내일 요일을 맞혀요</div>
-      </div>
-      <div class="mode-card hangul" onclick="startHangul()">
-        <span class="emoji">🔤</span>
-        <div class="title">한글 익히기</div>
-        <div class="desc">자음, 모음을 순서대로 눌러<br>단어를 완성해요</div>
+    <div class="fit-wrap">
+      <h1 class="home-title">글자 숫자 놀이터</h1>
+      <p class="home-sub">놀이터에서 한글과 숫자를 배워봐요!</p>
+      <div class="score-pill" id="home-score-pill">⭐ 0 / 15</div>
+      <div class="home-complete-msg" id="home-complete-msg" style="display:none;">🎉 오늘의 목표를 달성했습니다! 🎉</div>
+      <div class="home-cards">
+        <div class="mode-card shape" onclick="startShape()">
+          <span class="emoji">🧩</span>
+          <div class="title">모양 맞추기</div>
+          <div class="desc">같은 이모지 카드를<br>찾아보세요</div>
+        </div>
+        <div class="mode-card card" onclick="startCard()">
+          <span class="emoji">🃏</span>
+          <div class="title">카드 맞추기</div>
+          <div class="desc">그림과 숫자가 같은<br>카드를 찾아보세요</div>
+        </div>
+        <div class="mode-card math" onclick="startMath()">
+          <span class="emoji">🔢</span>
+          <div class="title">숫자 계산</div>
+          <div class="desc">덧셈과 뺄셈을 풀고<br>숫자 버튼을 눌러요</div>
+        </div>
+        <div class="mode-card day" onclick="startDay()">
+          <span class="emoji">📅</span>
+          <div class="title">요일 익히기</div>
+          <div class="desc">오늘 요일을 보고<br>내일 요일을 맞혀요</div>
+        </div>
+        <div class="mode-card hangul" onclick="startHangul()">
+          <span class="emoji">🔤</span>
+          <div class="title">한글 익히기</div>
+          <div class="desc">자음, 모음을 순서대로 눌러<br>단어를 완성해요</div>
+        </div>
       </div>
     </div>
   </section>
@@ -657,12 +677,14 @@
       <div class="score-pill" id="shape-score-pill">⭐ 0 / 5</div>
     </header>
 
-    <div class="stage" id="shape-stage" style="align-items:center;">
-      <div class="shape-label">같은 모양을 찾아보세요</div>
-      <div class="shape-target" id="shape-target">🍎</div>
-    </div>
+    <div class="fit-wrap">
+      <div class="stage" id="shape-stage" style="align-items:center;">
+        <div class="shape-label">같은 모양을 찾아보세요</div>
+        <div class="shape-target" id="shape-target">🍎</div>
+      </div>
 
-    <div class="shape-options" id="shape-options"></div>
+      <div class="shape-options" id="shape-options"></div>
+    </div>
   </section>
 
   <!-- ============ CARD MATCHING ============ -->
@@ -672,15 +694,17 @@
       <div class="score-pill" id="card-score-pill">⭐ 0 / 5</div>
     </header>
 
-    <div class="stage" id="card-stage" style="align-items:center;">
-      <div class="shape-label">그림과 숫자가 같은 카드를 찾아보세요</div>
-      <div class="card-target" id="card-target">
-        <span class="card-emoji" id="card-target-emoji">🍎</span>
-        <span class="card-number" id="card-target-number">5</span>
+    <div class="fit-wrap">
+      <div class="stage" id="card-stage" style="align-items:center;">
+        <div class="shape-label">그림과 숫자가 같은 카드를 찾아보세요</div>
+        <div class="card-target" id="card-target">
+          <span class="card-emoji" id="card-target-emoji">🍎</span>
+          <span class="card-number" id="card-target-number">5</span>
+        </div>
       </div>
-    </div>
 
-    <div class="card-options" id="card-options"></div>
+      <div class="card-options" id="card-options"></div>
+    </div>
   </section>
 
   <!-- ============ HANGUL GAME ============ -->
@@ -690,15 +714,17 @@
       <div class="score-pill" id="hangul-score-pill">⭐ 0 / 5</div>
     </header>
 
-    <div class="stage" id="hangul-stage">
-      <div class="emoji-hint" id="hangul-emoji" onclick="speakCurrentWord()"><span id="hangul-emoji-char">🌳</span><span class="speaker-badge">🔊</span></div>
-      <div class="word-row" id="word-row"></div>
-    </div>
+    <div class="fit-wrap">
+      <div class="stage" id="hangul-stage">
+        <div class="emoji-hint" id="hangul-emoji" onclick="speakCurrentWord()"><span id="hangul-emoji-char">🌳</span><span class="speaker-badge">🔊</span></div>
+        <div class="word-row" id="word-row"></div>
+      </div>
 
-    <div class="kb-label">자음</div>
-    <div class="kb" id="cho-kb"></div>
-    <div class="kb-label">모음</div>
-    <div class="kb" id="jung-kb"></div>
+      <div class="kb-label">자음</div>
+      <div class="kb" id="cho-kb"></div>
+      <div class="kb-label">모음</div>
+      <div class="kb" id="jung-kb"></div>
+    </div>
   </section>
 
   <!-- ============ MATH GAME ============ -->
@@ -708,16 +734,18 @@
       <div class="score-pill" id="math-score-pill">⭐ 0 / 5</div>
     </header>
 
-    <div class="stage" id="math-stage" style="align-items:center;">
-      <div class="apple-hint" id="apple-hint"></div>
-      <div class="equation-wrap" onclick="speakMathProblem()">
-        <span class="equation" id="equation">3 + 4 = ?</span>
-        <span class="speaker-badge">🔊</span>
+    <div class="fit-wrap">
+      <div class="stage" id="math-stage" style="align-items:center;">
+        <div class="apple-hint" id="apple-hint"></div>
+        <div class="equation-wrap" onclick="speakMathProblem()">
+          <span class="equation" id="equation">3 + 4 = ?</span>
+          <span class="speaker-badge">🔊</span>
+        </div>
+        <div class="answer-box" id="answer-box">&nbsp;</div>
       </div>
-      <div class="answer-box" id="answer-box">&nbsp;</div>
-    </div>
 
-    <div class="numpad" id="numpad"></div>
+      <div class="numpad" id="numpad"></div>
+    </div>
   </section>
 
   <!-- ============ DAY-OF-WEEK GAME ============ -->
@@ -727,16 +755,18 @@
       <div class="score-pill" id="day-score-pill">⭐ 0 / 5</div>
     </header>
 
-    <div class="stage" id="day-stage" style="align-items:center;">
-      <div class="today-date" id="today-date"></div>
-      <div class="today-day" id="today-day"></div>
-      <div class="day-question-wrap" onclick="speakDayQuestion()">
-        <span class="day-question">내일은 무슨 요일일까요?</span>
-        <span class="speaker-badge">🔊</span>
+    <div class="fit-wrap">
+      <div class="stage" id="day-stage" style="align-items:center;">
+        <div class="today-date" id="today-date"></div>
+        <div class="today-day" id="today-day"></div>
+        <div class="day-question-wrap" onclick="speakDayQuestion()">
+          <span class="day-question">내일은 무슨 요일일까요?</span>
+          <span class="speaker-badge">🔊</span>
+        </div>
       </div>
-    </div>
 
-    <div class="day-options" id="day-options"></div>
+      <div class="day-options" id="day-options"></div>
+    </div>
   </section>
 
 </div>
@@ -872,13 +902,44 @@ function playApplause(){
 }
 
 /* =========================================================
-   공통: 화면 전환
+   공통: 화면 전환 + 화면 크기에 맞춰 내용 자동 축소(스크롤 없이 꽉 차게)
 ========================================================= */
+function fitScreenContent(section){
+  if(!section) return;
+  const wrap = section.querySelector(':scope > .fit-wrap');
+  if(!wrap) return;
+  wrap.style.transform = 'none';
+  const header = section.querySelector(':scope > header');
+  let headerSpace = 0;
+  if(header){
+    const hRect = header.getBoundingClientRect();
+    const hStyle = getComputedStyle(header);
+    headerSpace = hRect.height + parseFloat(hStyle.marginBottom || 0);
+  }
+  const availH = section.clientHeight - headerSpace;
+  const availW = section.clientWidth;
+  const needH = wrap.scrollHeight;
+  const needW = wrap.scrollWidth;
+  if(needH <= 0 || needW <= 0) return;
+  const scale = Math.min(1, availH / needH, availW / needW);
+  wrap.style.transform = scale < 0.995 ? `scale(${scale})` : 'none';
+}
+function fitActiveScreen(){
+  requestAnimationFrame(()=>{
+    const active = document.querySelector('.screen.active');
+    if(active) fitScreenContent(active);
+  });
+}
 function showScreen(id){
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
+  const el = document.getElementById(id);
+  el.classList.add('active');
+  fitActiveScreen();
 }
 function goHome(){ showScreen('home'); renderHome(); }
+
+window.addEventListener('resize', fitActiveScreen);
+window.addEventListener('orientationchange', ()=>setTimeout(fitActiveScreen, 250));
 
 /* =========================================================
    공통: 정답 팝업 + 폭죽 이펙트
@@ -1085,6 +1146,7 @@ function renderHome(){
       else cards[key].classList.add('locked');
     });
   }
+  fitActiveScreen();
 }
 
 /* ---- 설정 모달 ---- */
@@ -1210,6 +1272,7 @@ function nextShapeRound(){
     b.onclick = ()=>handleShapeClick(emoji);
     box.appendChild(b);
   });
+  fitActiveScreen();
 }
 
 function handleShapeClick(emoji){
@@ -1284,6 +1347,7 @@ function nextCardRound(){
     b.onclick = ()=>handleCardClick(card);
     box.appendChild(b);
   });
+  fitActiveScreen();
 }
 
 function handleCardClick(card){
@@ -1467,6 +1531,7 @@ function nextWord(){
   currentWordText = pick.word;
   document.getElementById('hangul-emoji-char').textContent = pick.emoji;
   renderWord(pick.word);
+  fitActiveScreen();
   if(!autoplayDisabled) speakCurrentWord();
 }
 
@@ -1602,6 +1667,7 @@ function nextMathProblem(){
   document.getElementById('equation').textContent = `${a} ${op} ${b} = ?`;
   document.getElementById('answer-box').textContent = '\u00A0';
   renderAppleHint(op, a, b);
+  fitActiveScreen();
   if(!autoplayDisabled) speakMathProblem();
 }
 
@@ -1654,6 +1720,7 @@ function nextDayQuestion(useReal){
   currentTodayDayName = DAY_NAMES[dayIndex];
   document.getElementById('today-date').textContent = dateLabel;
   document.getElementById('today-day').textContent = '오늘은 ' + DAY_NAMES[dayIndex] + '이에요';
+  fitActiveScreen();
   if(!autoplayDisabled) speakDayQuestion();
 }
 
