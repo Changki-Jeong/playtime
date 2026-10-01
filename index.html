@@ -21,6 +21,8 @@
     --sky-dark:#2F93BD;
     --rose:#FF7AA8;
     --rose-dark:#E85585;
+    --lime:#8BC34A;
+    --lime-dark:#689F38;
     --sun:#FFC93C;
     --card:#FFFFFF;
     --line:#EADFC9;
@@ -154,6 +156,7 @@
   .mode-card.day{ background:var(--violet); box-shadow:0 6px 0 var(--violet-dark); }
   .mode-card.shape{ background:var(--sky); box-shadow:0 6px 0 var(--sky-dark); }
   .mode-card.card{ background:var(--rose); box-shadow:0 6px 0 var(--rose-dark); }
+  .mode-card.count{ background:var(--lime); box-shadow:0 6px 0 var(--lime-dark); }
   .mode-card .emoji{ font-size:56px; display:block; margin-bottom:10px; }
   .mode-card .title{ font-size:26px; margin-bottom:6px; }
   .mode-card .desc{ font-size:15px; opacity:.92; line-height:1.5; }
@@ -243,6 +246,48 @@
   .card-option:active{ transform:translateY(3px); box-shadow:none; }
   .card-option .card-emoji{ font-size:42px; line-height:1; }
   .card-option .card-number{ font-size:36px; font-weight:700; color:var(--ink); line-height:1; }
+
+  /* ---------- counting game ---------- */
+  .count-target{
+    display:flex;
+    flex-wrap:wrap;
+    align-content:center;
+    justify-content:center;
+    gap:8px;
+    width:100%;
+    max-width:280px;
+    min-height:150px;
+    background:var(--card);
+    border:4px solid var(--line);
+    border-radius:26px;
+    padding:16px;
+    box-shadow:0 6px 0 var(--line);
+  }
+  .count-target .count-emoji{ font-size:40px; line-height:1; }
+  .count-options{
+    width:100%;
+    max-width:340px;
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:14px;
+    margin-top:22px;
+  }
+  .count-option{
+    font-family:inherit;
+    font-size:48px;
+    font-weight:700;
+    color:var(--ink);
+    aspect-ratio:1/1;
+    background:var(--card);
+    border:4px solid var(--line);
+    border-radius:22px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    cursor:pointer;
+    box-shadow:0 5px 0 var(--line);
+  }
+  .count-option:active{ transform:translateY(3px); box-shadow:none; }
 
   /* ---------- word display ---------- */
   .stage{
@@ -651,6 +696,11 @@
           <div class="title">카드 맞추기</div>
           <div class="desc">그림과 숫자가 같은<br>카드를 찾아보세요</div>
         </div>
+        <div class="mode-card count" onclick="startCount()">
+          <span class="emoji">🧮</span>
+          <div class="title">숫자세기</div>
+          <div class="desc">이모지 개수를 세어<br>숫자를 찾아보세요</div>
+        </div>
         <div class="mode-card math" onclick="startMath()">
           <span class="emoji">🔢</span>
           <div class="title">숫자 계산</div>
@@ -704,6 +754,23 @@
       </div>
 
       <div class="card-options" id="card-options"></div>
+    </div>
+  </section>
+
+  <!-- ============ COUNTING GAME ============ -->
+  <section id="count-game" class="screen">
+    <header>
+      <button class="back-btn" onclick="goHome()">← 처음으로</button>
+      <div class="score-pill" id="count-score-pill">⭐ 0 / 5</div>
+    </header>
+
+    <div class="fit-wrap">
+      <div class="stage" id="count-stage" style="align-items:center;">
+        <div class="shape-label">이모지가 몇 개인지 세어보세요</div>
+        <div class="count-target" id="count-target"></div>
+      </div>
+
+      <div class="count-options" id="count-options"></div>
     </div>
   </section>
 
@@ -806,6 +873,14 @@
       </div>
     </div>
     <div class="goal-row">
+      <span class="goal-row-label">🧮 숫자세기</span>
+      <div class="goal-stepper small">
+        <button class="stepper-btn" onclick="changeGameGoal('count',-1)">－</button>
+        <div class="goal-value" id="goal-value-count">5</div>
+        <button class="stepper-btn" onclick="changeGameGoal('count',1)">＋</button>
+      </div>
+    </div>
+    <div class="goal-row">
       <span class="goal-row-label">🔢 숫자 계산</span>
       <div class="goal-stepper small">
         <button class="stepper-btn" onclick="changeGameGoal('math',-1)">－</button>
@@ -829,7 +904,7 @@
         <button class="stepper-btn" onclick="changeGameGoal('hangul',1)">＋</button>
       </div>
     </div>
-    <div class="total-goal-line">오늘의 목표 점수: <b id="total-goal-display">25</b>점</div>
+    <div class="total-goal-line">오늘의 목표 점수: <b id="total-goal-display">30</b>점</div>
 
     <div class="modal-label" style="margin-top:18px;">현재 점수</div>
     <button class="reset-btn" onclick="resetScore()">현재 점수 초기화</button>
@@ -1019,11 +1094,11 @@ function wrongShake(stageEl){
 /* =========================================================
    공통: 학습별 점수/목표 + 게임 진행 모드 + 설정 (window.storage로 저장, 없으면 메모리로만 동작)
 ========================================================= */
-const GAME_ORDER = ['shape','card','math','day','hangul'];
-const GAME_LABELS = { shape:'모양 맞추기', card:'카드 맞추기', hangul:'한글 익히기', math:'숫자 계산', day:'요일 익히기' };
+const GAME_ORDER = ['shape','card','count','math','day','hangul'];
+const GAME_LABELS = { shape:'모양 맞추기', card:'카드 맞추기', count:'숫자세기', hangul:'한글 익히기', math:'숫자 계산', day:'요일 익히기' };
 
-let goals = { shape:5, card:5, hangul:5, math:5, day:5 };
-let scores = { shape:0, card:0, hangul:0, math:0, day:0 };
+let goals = { shape:5, card:5, count:5, hangul:5, math:5, day:5 };
+let scores = { shape:0, card:0, count:0, hangul:0, math:0, day:0 };
 let gameMode = 'free'; // 'free' | 'goal'
 let goalStageIndex = 0; // goal 모드에서 현재 진행 중인 학습의 GAME_ORDER 인덱스
 let autoplayDisabled = false;
@@ -1052,13 +1127,14 @@ function saveSettings(){
 function saveScoreState(){
   safeSet('kids-app-daily-score', JSON.stringify({ date: todayKey(), scores, goalAchievedToday, goalStageIndex }));
 }
-function totalGoal(){ return goals.shape + goals.card + goals.hangul + goals.math + goals.day; }
-function totalScore(){ return scores.shape + scores.card + scores.hangul + scores.math + scores.day; }
+function totalGoal(){ return goals.shape + goals.card + goals.count + goals.hangul + goals.math + goals.day; }
+function totalScore(){ return scores.shape + scores.card + scores.count + scores.hangul + scores.math + scores.day; }
 
 function updateAllScoreUI(){
   setText('home-score-pill', `⭐ ${totalScore()} / ${totalGoal()}`);
   setText('shape-score-pill', `⭐ ${scores.shape} / ${goals.shape}`);
   setText('card-score-pill', `⭐ ${scores.card} / ${goals.card}`);
+  setText('count-score-pill', `⭐ ${scores.count} / ${goals.count}`);
   setText('hangul-score-pill', `⭐ ${scores.hangul} / ${goals.hangul}`);
   setText('math-score-pill', `⭐ ${scores.math} / ${goals.math}`);
   setText('day-score-pill', `⭐ ${scores.day} / ${goals.day}`);
@@ -1115,6 +1191,7 @@ function celebrateGoal(){
 function startGameByKey(key){
   if(key === 'shape') startShape();
   else if(key === 'card') startCard();
+  else if(key === 'count') startCount();
   else if(key === 'hangul') startHangul();
   else if(key === 'math') startMath();
   else if(key === 'day') startDay();
@@ -1125,6 +1202,7 @@ function renderHome(){
   const cards = {
     shape: document.querySelector('.mode-card.shape'),
     card: document.querySelector('.mode-card.card'),
+    count: document.querySelector('.mode-card.count'),
     hangul: document.querySelector('.mode-card.hangul'),
     math: document.querySelector('.mode-card.math'),
     day: document.querySelector('.mode-card.day')
@@ -1164,6 +1242,7 @@ function openSettings(){
   updateModeButtons();
   setText('goal-value-shape', goals.shape);
   setText('goal-value-card', goals.card);
+  setText('goal-value-count', goals.count);
   setText('goal-value-hangul', goals.hangul);
   setText('goal-value-math', goals.math);
   setText('goal-value-day', goals.day);
@@ -1185,7 +1264,7 @@ function changeGameGoal(game, delta){
   saveSettings();
 }
 function resetScore(){
-  scores = { shape:0, card:0, hangul:0, math:0, day:0 };
+  scores = { shape:0, card:0, count:0, hangul:0, math:0, day:0 };
   goalAchievedToday = false;
   goalStageIndex = 0;
   hangulInitialized = false;
@@ -1206,6 +1285,7 @@ async function loadAppState(){
       if(s.goals){
         goals.shape = s.goals.shape || 5;
         goals.card = s.goals.card || 5;
+        goals.count = s.goals.count || 5;
         goals.hangul = s.goals.hangul || 5;
         goals.math = s.goals.math || 5;
         goals.day = s.goals.day || 5;
@@ -1222,6 +1302,7 @@ async function loadAppState(){
         if(s.scores){
           scores.shape = s.scores.shape || 0;
           scores.card = s.scores.card || 0;
+          scores.count = s.scores.count || 0;
           scores.hangul = s.scores.hangul || 0;
           scores.math = s.scores.math || 0;
           scores.day = s.scores.day || 0;
@@ -1367,6 +1448,64 @@ function handleCardClick(card){
 function startCard(){
   showScreen('card-game');
   nextCardRound();
+}
+
+/* =========================================================
+   숫자세기 (이모지 개수를 세어 숫자 찾기)
+========================================================= */
+const COUNT_EMOJIS = ['🍎','⭐','🎈','🐶','🍌','🌸','🚗','🍇','🎵','🐱'];
+
+let countTargetNum = 0;
+
+function nextCountRound(){
+  const emoji = COUNT_EMOJIS[Math.floor(Math.random()*COUNT_EMOJIS.length)];
+  countTargetNum = Math.floor(Math.random()*9) + 1; // 1~9
+
+  const target = document.getElementById('count-target');
+  target.innerHTML = '';
+  for(let i=0;i<countTargetNum;i++){
+    const span = document.createElement('span');
+    span.className = 'count-emoji';
+    span.textContent = emoji;
+    target.appendChild(span);
+  }
+
+  const wrongs = [];
+  while(wrongs.length < 3){
+    const n = Math.floor(Math.random()*9) + 1;
+    if(n !== countTargetNum && !wrongs.includes(n)) wrongs.push(n);
+  }
+  const options = [...wrongs, countTargetNum].sort(()=>Math.random()-0.5);
+
+  const box = document.getElementById('count-options');
+  box.innerHTML = '';
+  options.forEach(n=>{
+    const b = document.createElement('button');
+    b.className = 'count-option';
+    b.textContent = n;
+    b.onclick = ()=>handleCountClick(n);
+    box.appendChild(b);
+  });
+  fitActiveScreen();
+}
+
+function handleCountClick(n){
+  const stage = document.getElementById('count-stage');
+  if(n === countTargetNum){
+    const advancing = addScore('count', 1);
+    playCorrectChime();
+    burstConfetti();
+    showPopup('정답이에요! 🎉');
+    if(!advancing) setTimeout(nextCountRound, 1200);
+  } else {
+    playWrongBuzz();
+    wrongShake(stage);
+  }
+}
+
+function startCount(){
+  showScreen('count-game');
+  nextCountRound();
 }
 
 /* =========================================================
